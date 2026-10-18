@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "VITE_BASE=/weekboard/ npm run build && npx gh-pages -d dist -b gh-pages -m \"Deploy Weekboard site\""
   },
   "dependencies": {
     "date-fns": "^4.4.0",

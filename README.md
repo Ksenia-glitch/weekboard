@@ -2,6 +2,10 @@
 
 Weekly planner for college homework, quizzes, and deadlines.
 
+## Live site
+
+**https://ksenia-glitch.github.io/weekboard/**
+
 ## Local
 
 ```bash
@@ -9,12 +13,15 @@ npm install
 npm run dev
 ```
 
-## Live site
+## Update the live site
 
-After the first GitHub Actions deploy succeeds:
+After you change the code:
 
-**https://ksenia-glitch.github.io/weekboard/**
+```bash
+git add .
+git commit -m "Describe your change"
+git push
+npm run deploy
+```
 
-## Deploy
-
-Push to `main` — GitHub Actions builds the site and publishes it to GitHub Pages automatically.
+Repo: https://github.com/Ksenia-glitch/weekboard
