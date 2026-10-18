@@ -14,9 +14,12 @@ type TaskCardProps = {
 export function TaskCard({ task, day, onOpen, onToggle }: TaskCardProps) {
   const urgency = getUrgency(task)
   const carried = isCarriedForward(task, day)
-  const attachmentCount = task.attachments.length
+  const progressCount = task.attachments.length
+  const assignmentCount = task.assignmentFiles.length
+  const fileCount = progressCount + assignmentCount
   const assessment = getAssessmentOption(task.assessmentType)
   const prep = needsPrep(task.assessmentType)
+  const primaryLink = task.links[0] ?? null
 
   return (
     <article className={`task-card urgency-${urgency.level}`}>
@@ -47,19 +50,40 @@ export function TaskCard({ task, day, onOpen, onToggle }: TaskCardProps) {
           {prep && task.topics && !task.completed && (
             <p className="task-card__topics">{task.topics}</p>
           )}
-          {(prep || carried || attachmentCount > 0) && (
+          {(prep || carried || fileCount > 0 || task.links.length > 0) && (
             <p className="task-card__flags">
               {prep && !task.completed && <span className="flag flag-prep">Prep needed</span>}
               {carried && <span className="flag flag-carry">Carried from plan day</span>}
-              {attachmentCount > 0 && (
+              {assignmentCount > 0 && (
+                <span className="flag flag-assign">
+                  {assignmentCount} prompt{assignmentCount === 1 ? '' : 's'}
+                </span>
+              )}
+              {progressCount > 0 && (
                 <span className="flag flag-files">
-                  {attachmentCount} file{attachmentCount === 1 ? '' : 's'}
+                  {progressCount} file{progressCount === 1 ? '' : 's'}
+                </span>
+              )}
+              {task.links.length > 0 && (
+                <span className="flag flag-link">
+                  {task.links.length} link{task.links.length === 1 ? '' : 's'}
                 </span>
               )}
             </p>
           )}
         </button>
       </div>
+      {primaryLink && (
+        <a
+          className="task-card__link"
+          href={primaryLink.url}
+          target="_blank"
+          rel="noreferrer"
+          onClick={(event) => event.stopPropagation()}
+        >
+          Open {primaryLink.label}
+        </a>
+      )}
     </article>
   )
 }

@@ -1,16 +1,68 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import { THEME_OPTIONS, type ThemeId } from '../themes'
+import {
+  BASE_THEME_OPTIONS,
+  THEME_OPTIONS,
+  type ThemeId,
+  type ThemeOption,
+} from '../themes'
 
 type ThemePickerProps = {
   theme: ThemeId
   onChange: (theme: ThemeId) => void
+  /** Student's school theme option (curated or looked-up). */
+  campusOption?: ThemeOption | null
+  onSelectCampus?: () => void
 }
 
-export function ThemePicker({ theme, onChange }: ThemePickerProps) {
+function ThemeOptionButton({
+  option,
+  selected,
+  onSelect,
+}: {
+  option: ThemeOption
+  selected: boolean
+  onSelect: () => void
+}) {
+  return (
+    <button
+      type="button"
+      role="option"
+      aria-selected={selected}
+      className={`theme-picker__option ${selected ? 'is-selected' : ''}`}
+      onClick={(event) => {
+        event.preventDefault()
+        event.stopPropagation()
+        onSelect()
+      }}
+    >
+      <span className="theme-picker__dots" aria-hidden="true">
+        {option.preview.map((color) => (
+          <span key={`${option.id}-${option.label}-${color}`} style={{ background: color }} />
+        ))}
+      </span>
+      <span className="theme-picker__copy">
+        <strong>{option.label}</strong>
+        <em>{option.description}</em>
+      </span>
+    </button>
+  )
+}
+
+export function ThemePicker({
+  theme,
+  onChange,
+  campusOption = null,
+  onSelectCampus,
+}: ThemePickerProps) {
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const menuId = useId()
-  const current = THEME_OPTIONS.find((option) => option.id === theme) ?? THEME_OPTIONS[0]!
+  const current =
+    (campusOption && (theme === campusOption.id || theme === 'campus')
+      ? campusOption
+      : null) ??
+    THEME_OPTIONS.find((option) => option.id === theme) ??
+    BASE_THEME_OPTIONS[0]!
 
   useEffect(() => {
     if (!open) {
@@ -29,7 +81,6 @@ export function ThemePicker({ theme, onChange }: ThemePickerProps) {
       }
     }
 
-    // Defer so the opening click does not immediately close the menu.
     const timer = window.setTimeout(() => {
       document.addEventListener('pointerdown', onPointerDown)
     }, 0)
@@ -80,35 +131,40 @@ export function ThemePicker({ theme, onChange }: ThemePickerProps) {
         >
           <p className="theme-picker__heading">Pick a theme</p>
           <ul className="theme-picker__list">
-            {THEME_OPTIONS.map((option) => {
-              const selected = option.id === theme
-              return (
-                <li key={option.id}>
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={selected}
-                    className={`theme-picker__option ${selected ? 'is-selected' : ''}`}
-                    onClick={(event) => {
-                      event.preventDefault()
-                      event.stopPropagation()
-                      selectTheme(option.id)
-                    }}
-                  >
-                    <span className="theme-picker__dots" aria-hidden="true">
-                      {option.preview.map((color) => (
-                        <span key={`${option.id}-${color}`} style={{ background: color }} />
-                      ))}
-                    </span>
-                    <span className="theme-picker__copy">
-                      <strong>{option.label}</strong>
-                      <em>{option.description}</em>
-                    </span>
-                  </button>
-                </li>
-              )
-            })}
+            {BASE_THEME_OPTIONS.map((option) => (
+              <li key={option.id}>
+                <ThemeOptionButton
+                  option={option}
+                  selected={option.id === theme}
+                  onSelect={() => selectTheme(option.id)}
+                />
+              </li>
+            ))}
           </ul>
+
+          {campusOption && (
+            <>
+              <p className="theme-picker__heading theme-picker__heading--campus">
+                Your college
+              </p>
+              <ul className="theme-picker__list">
+                <li>
+                  <ThemeOptionButton
+                    option={campusOption}
+                    selected={theme === campusOption.id || theme === 'campus'}
+                    onSelect={() => {
+                      if (onSelectCampus) {
+                        onSelectCampus()
+                      } else {
+                        selectTheme(campusOption.id)
+                      }
+                      setOpen(false)
+                    }}
+                  />
+                </li>
+              </ul>
+            </>
+          )}
         </div>
       )}
     </div>

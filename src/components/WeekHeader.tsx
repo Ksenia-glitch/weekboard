@@ -1,6 +1,7 @@
-import type { ThemeId } from '../themes'
+import type { ThemeId, ThemeOption } from '../themes'
 import type { CalendarView } from '../types/view'
 import { CALENDAR_VIEWS } from '../types/view'
+import { CampusBadge } from './CampusBadge'
 import { ThemePicker } from './ThemePicker'
 
 type WeekHeaderProps = {
@@ -9,14 +10,26 @@ type WeekHeaderProps = {
   navLabel: string
   termWeekLabel: string
   showTermWeek: boolean
+  username: string
   theme: ThemeId
+  campusOption?: ThemeOption | null
+  campusBadge?: {
+    key?: string
+    name: string
+    shortName: string
+    logoUrl: string
+    primary: string
+    accent: string
+  } | null
   onThemeChange: (theme: ThemeId) => void
+  onSelectCampus?: () => void
   onViewChange: (view: CalendarView) => void
   onPrev: () => void
   onNext: () => void
   onToday: () => void
   onSetTermWeek: () => void
   onAdd: () => void
+  onLogout: () => void
 }
 
 export function WeekHeader({
@@ -25,23 +38,53 @@ export function WeekHeader({
   navLabel,
   termWeekLabel,
   showTermWeek,
+  username,
   theme,
+  campusOption = null,
+  campusBadge = null,
   onThemeChange,
+  onSelectCampus,
   onViewChange,
   onPrev,
   onNext,
   onToday,
   onSetTermWeek,
   onAdd,
+  onLogout,
 }: WeekHeaderProps) {
   return (
     <header className="week-header">
       <div className="week-header__top">
         <div className="week-header__brand">
-          <p className="brand-mark">Weekboard</p>
+          <div className="brand-mark-row">
+            <p className="brand-mark">Weekboard</p>
+            {campusBadge && (
+              <CampusBadge
+                key={campusBadge.key ?? campusBadge.logoUrl}
+                name={campusBadge.name}
+                shortName={campusBadge.shortName}
+                logoUrl={campusBadge.logoUrl}
+                primary={campusBadge.primary}
+                accent={campusBadge.accent}
+              />
+            )}
+          </div>
           <p className="brand-sub">Homework, quizzes, and due dates — one board.</p>
         </div>
-        <ThemePicker theme={theme} onChange={onThemeChange} />
+        <div className="week-header__account">
+          <span className="account-chip" title={`Signed in as ${username}`}>
+            @{username}
+          </span>
+          <button type="button" className="nav-btn nav-btn--text" onClick={onLogout}>
+            Sign out
+          </button>
+          <ThemePicker
+            theme={theme}
+            campusOption={campusOption}
+            onChange={onThemeChange}
+            onSelectCampus={onSelectCampus}
+          />
+        </div>
       </div>
 
       <div className="view-switcher" role="tablist" aria-label="Calendar view">

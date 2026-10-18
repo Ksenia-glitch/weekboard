@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { userScopedKey } from '../utils/userStorage'
 
 const STORAGE_KEY = 'weekboard-courses-v1'
 
-function readCourses(): string[] {
+function readCourses(userId: string): string[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(userScopedKey(STORAGE_KEY, userId))
     if (!raw) {
       return []
     }
@@ -21,19 +22,22 @@ function readCourses(): string[] {
   }
 }
 
-function writeCourses(courses: string[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(courses))
+function writeCourses(userId: string, courses: string[]): void {
+  localStorage.setItem(userScopedKey(STORAGE_KEY, userId), JSON.stringify(courses))
 }
 
-export function useCourses() {
-  const [courses, setCoursesState] = useState<string[]>(() => readCourses())
-  const [askOpen, setAskOpen] = useState(() => readCourses().length === 0)
+export function useCourses(userId: string) {
+  const [courses, setCoursesState] = useState<string[]>(() => readCourses(userId))
+  const [askOpen, setAskOpen] = useState(() => readCourses(userId).length === 0)
+
+  useEffect(() => {
+    writeCourses(userId, courses)
+  }, [courses, userId])
 
   function saveCourses(next: string[]) {
     const cleaned = next
       .map((item) => item.trim())
       .filter((item, index, list) => item.length > 0 && list.indexOf(item) === index)
-    writeCourses(cleaned)
     setCoursesState(cleaned)
     setAskOpen(cleaned.length === 0)
   }

@@ -9,6 +9,7 @@ import {
   type TaskFamily,
 } from '../utils/assessment'
 import { formatShortDate } from '../utils/dates'
+import { isValidHttpUrl } from '../utils/links'
 import { getUrgency } from '../utils/urgency'
 import { ImageLightbox } from './ImageLightbox'
 
@@ -27,6 +28,10 @@ type TaskModalProps = {
   onManageCourses: () => void
   onAddAttachment: (taskId: string, file: File) => Promise<void>
   onRemoveAttachment: (taskId: string, attachmentId: string) => void
+  onAddAssignmentFile: (taskId: string, file: File) => Promise<void>
+  onRemoveAssignmentFile: (taskId: string, fileId: string) => void
+  onAddLink: (taskId: string, url: string, label?: string) => void
+  onRemoveLink: (taskId: string, linkId: string) => void
 }
 
 const MAX_FILE_BYTES = 4 * 1024 * 1024
@@ -45,6 +50,10 @@ export function TaskModal({
   onManageCourses,
   onAddAttachment,
   onRemoveAttachment,
+  onAddAssignmentFile,
+  onRemoveAssignmentFile,
+  onAddLink,
+  onRemoveLink,
 }: TaskModalProps) {
   const titleId = useId()
   const startingFamily: TaskFamily | null = task
@@ -60,8 +69,11 @@ export function TaskModal({
   const [notes, setNotes] = useState(task?.notes ?? '')
   const [plannedDate, setPlannedDate] = useState(task?.plannedDate ?? initialDate)
   const [deadline, setDeadline] = useState(task?.deadline ?? initialDate)
+  const [linkUrl, setLinkUrl] = useState('')
+  const [linkLabel, setLinkLabel] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [uploadingAssignment, setUploadingAssignment] = useState(false)
   const [preview, setPreview] = useState<{ src: string; alt: string } | null>(null)
 
   useEffect(() => {
@@ -85,25 +97,55 @@ export function TaskModal({
     setError(null)
   }
 
-  async function handleFiles(fileList: FileList | null) {
+  async function uploadFiles(
+    fileList: FileList | null,
+    kind: 'progress' | 'assignment',
+  ) {
     if (!task || !fileList || fileList.length === 0) {
       return
     }
 
     setError(null)
-    setUploading(true)
+    if (kind === 'progress') {
+      setUploading(true)
+    } else {
+      setUploadingAssignment(true)
+    }
     try {
       for (const file of Array.from(fileList)) {
         if (file.size > MAX_FILE_BYTES) {
           setError(`"${file.name}" is larger than 4 MB.`)
           continue
         }
-        await onAddAttachment(task.id, file)
+        if (kind === 'progress') {
+          await onAddAttachment(task.id, file)
+        } else {
+          await onAddAssignmentFile(task.id, file)
+        }
       }
     } catch {
       setError('Could not attach that file. Try a smaller photo or PDF.')
     } finally {
       setUploading(false)
+      setUploadingAssignment(false)
+    }
+  }
+
+  function handleAddLink() {
+    if (!task) {
+      return
+    }
+    if (!isValidHttpUrl(linkUrl)) {
+      setError('Enter a valid website link (example: canvas.oregonstate.edu/...).')
+      return
+    }
+    try {
+      onAddLink(task.id, linkUrl, linkLabel)
+      setLinkUrl('')
+      setLinkLabel('')
+      setError(null)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not add that link.')
     }
   }
 
@@ -347,65 +389,189 @@ export function TaskModal({
             </div>
 
             {task && (
-              <section className="attachments">
-                <div className="attachments__header">
-                  <h3>{isHomework ? 'Progress files' : 'Study materials'}</h3>
-                  <label className="file-btn">
-                    {uploading ? 'Adding…' : 'Attach photo / file'}
-                    <input
-                      type="file"
-                      accept="image/*,.pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.heic"
-                      multiple
-                      hidden
-                      disabled={uploading}
-                      onChange={(event) => {
-                        void handleFiles(event.target.files)
-                        event.target.value = ''
-                      }}
-                    />
-                  </label>
-                </div>
-                <p className="attachments__hint">
-                  {isHomework
-                    ? 'Attach drafts or photos of what you already finished.'
-                    : 'Attach notes, practice quizzes, or screenshots while you study.'}
-                </p>
-                {task.attachments.length === 0 ? (
-                  <p className="attachments__empty">No files yet.</p>
-                ) : (
-                  <ul className="attachments__list">
-                    {task.attachments.map((file) => (
-                      <li key={file.id} className="attachment-item">
-                        {file.mimeType.startsWith('image/') ? (
-                          <button
-                            type="button"
-                            className="attachment-thumb"
-                            onClick={() =>
-                              setPreview({ src: file.dataUrl, alt: file.name })
-                            }
+              <>
+                <section className="attachments">
+                  <div className="attachments__header">
+                    <h3>Assignment file / prompt</h3>
+                    <label className="file-btn">
+                      {uploadingAssignment ? 'Adding…' : 'Attach file'}
+                      <input
+                        type="file"
+                        accept="image/*,.pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.heic"
+                        multiple
+                        hidden
+                        disabled={uploadingAssignment}
+                        onChange={(event) => {
+                          void uploadFiles(event.target.files, 'assignment')
+                          event.target.value = ''
+                        }}
+                      />
+                    </label>
+                  </div>
+                  <p className="attachments__hint">
+                    PDF, screenshot, or worksheet for this assignment itself.
+                  </p>
+                  {task.assignmentFiles.length === 0 ? (
+                    <p className="attachments__empty">No assignment files yet.</p>
+                  ) : (
+                    <ul className="attachments__list">
+                      {task.assignmentFiles.map((file) => (
+                        <li key={file.id} className="attachment-item">
+                          {file.mimeType.startsWith('image/') ? (
+                            <button
+                              type="button"
+                              className="attachment-thumb"
+                              onClick={() =>
+                                setPreview({ src: file.dataUrl, alt: file.name })
+                              }
+                            >
+                              <img src={file.dataUrl} alt={file.name} />
+                            </button>
+                          ) : (
+                            <a
+                              href={file.dataUrl}
+                              download={file.name}
+                              className="attachment-file"
+                            >
+                              {file.name}
+                            </a>
+                          )}
+                          <div className="attachment-item__meta">
+                            <span>{file.name}</span>
+                            <button
+                              type="button"
+                              className="text-btn"
+                              onClick={() => onRemoveAssignmentFile(task.id, file.id)}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+
+                <section className="attachments">
+                  <div className="attachments__header">
+                    <h3>Assignment link</h3>
+                  </div>
+                  <p className="attachments__hint">
+                    Paste a Canvas / Google Doc / website link. Tap it later to open the site.
+                  </p>
+                  <div className="link-form">
+                    <label className="field">
+                      <span>Website URL</span>
+                      <input
+                        type="url"
+                        value={linkUrl}
+                        onChange={(event) => setLinkUrl(event.target.value)}
+                        placeholder="https://canvas.oregonstate.edu/..."
+                      />
+                    </label>
+                    <label className="field">
+                      <span>Label (optional)</span>
+                      <input
+                        value={linkLabel}
+                        onChange={(event) => setLinkLabel(event.target.value)}
+                        placeholder="Canvas assignment"
+                      />
+                    </label>
+                    <button type="button" className="secondary-btn" onClick={handleAddLink}>
+                      Add link
+                    </button>
+                  </div>
+                  {task.links.length === 0 ? (
+                    <p className="attachments__empty">No links yet.</p>
+                  ) : (
+                    <ul className="link-list">
+                      {task.links.map((link) => (
+                        <li key={link.id} className="link-list__item">
+                          <a
+                            href={link.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="link-list__open"
                           >
-                            <img src={file.dataUrl} alt={file.name} />
-                          </button>
-                        ) : (
-                          <a href={file.dataUrl} download={file.name} className="attachment-file">
-                            {file.name}
+                            {link.label}
                           </a>
-                        )}
-                        <div className="attachment-item__meta">
-                          <span>{file.name}</span>
                           <button
                             type="button"
                             className="text-btn"
-                            onClick={() => onRemoveAttachment(task.id, file.id)}
+                            onClick={() => onRemoveLink(task.id, link.id)}
                           >
                             Remove
                           </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </section>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+
+                <section className="attachments">
+                  <div className="attachments__header">
+                    <h3>{isHomework ? 'Progress files' : 'Study materials'}</h3>
+                    <label className="file-btn">
+                      {uploading ? 'Adding…' : 'Attach photo / file'}
+                      <input
+                        type="file"
+                        accept="image/*,.pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.heic"
+                        multiple
+                        hidden
+                        disabled={uploading}
+                        onChange={(event) => {
+                          void uploadFiles(event.target.files, 'progress')
+                          event.target.value = ''
+                        }}
+                      />
+                    </label>
+                  </div>
+                  <p className="attachments__hint">
+                    {isHomework
+                      ? 'Attach drafts or photos of what you already finished.'
+                      : 'Attach notes, practice quizzes, or screenshots while you study.'}
+                  </p>
+                  {task.attachments.length === 0 ? (
+                    <p className="attachments__empty">No files yet.</p>
+                  ) : (
+                    <ul className="attachments__list">
+                      {task.attachments.map((file) => (
+                        <li key={file.id} className="attachment-item">
+                          {file.mimeType.startsWith('image/') ? (
+                            <button
+                              type="button"
+                              className="attachment-thumb"
+                              onClick={() =>
+                                setPreview({ src: file.dataUrl, alt: file.name })
+                              }
+                            >
+                              <img src={file.dataUrl} alt={file.name} />
+                            </button>
+                          ) : (
+                            <a
+                              href={file.dataUrl}
+                              download={file.name}
+                              className="attachment-file"
+                            >
+                              {file.name}
+                            </a>
+                          )}
+                          <div className="attachment-item__meta">
+                            <span>{file.name}</span>
+                            <button
+                              type="button"
+                              className="text-btn"
+                              onClick={() => onRemoveAttachment(task.id, file.id)}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              </>
             )}
 
             {error && <p className="form-error">{error}</p>}

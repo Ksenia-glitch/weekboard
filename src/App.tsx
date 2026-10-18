@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { AuthScreen } from './components/AuthScreen'
 import { CoursesModal } from './components/CoursesModal'
 import { DayColumn } from './components/DayColumn'
 import { DayView } from './components/DayView'
@@ -8,11 +9,14 @@ import { TermWeekModal } from './components/TermWeekModal'
 import { UrgencyLegend } from './components/UrgencyLegend'
 import { WeekHeader } from './components/WeekHeader'
 import { YearView } from './components/YearView'
+import { useAuth, type AuthUser } from './hooks/useAuth'
+import { useCampusFromEmail } from './hooks/useCampusFromEmail'
 import { useCourses } from './hooks/useCourses'
 import { useTasks, type TaskDraft } from './hooks/useTasks'
 import { useTermWeek } from './hooks/useTermWeek'
 import { useTheme } from './hooks/useTheme'
 import type { Task } from './types'
+import type { ThemeId } from './themes'
 import type { TaskFamily } from './utils/assessment'
 import type { CalendarView } from './types/view'
 import {
@@ -26,6 +30,7 @@ import {
   getNavLabel,
   getTermWeekInfo,
 } from './utils/termWeek'
+import { universityToThemeOption, type UniversityProfile } from './universities'
 import './App.css'
 
 type ModalState =
@@ -39,19 +44,52 @@ type ModalState =
     }
   | { open: true; mode: 'edit'; initialDate: string; task: Task }
 
-function App() {
+type PlannerAppProps = {
+  user: AuthUser
+  theme: ThemeId
+  onThemeChange: (theme: ThemeId) => void
+  onSelectCampusTheme: (campus: UniversityProfile) => void
+  onCampusResolved: (campus: UniversityProfile) => void
+  onCampusCleared: () => void
+  onLogout: () => void
+}
+
+function PlannerApp({
+  user,
+  theme,
+  onThemeChange,
+  onSelectCampusTheme,
+  onCampusResolved,
+  onCampusCleared,
+  onLogout,
+}: PlannerAppProps) {
   const [view, setView] = useState<CalendarView>('week')
   const [anchor, setAnchor] = useState(() => new Date())
   const [modal, setModal] = useState<ModalState>({ open: false })
-  const { theme, setTheme } = useTheme()
-  const { settings, askOpen, saveTermWeeks, openWeekSetup, closeWeekSetup } = useTermWeek()
+  const campus = useCampusFromEmail(user.email)
+  const campusOption = campus ? universityToThemeOption(campus) : null
+
+  useEffect(() => {
+    if (campus) {
+      onCampusResolved(campus)
+      return
+    }
+    onCampusCleared()
+  }, [campus, onCampusResolved, onCampusCleared])
+
+  // Remount badge whenever school identity changes so the previous logo cannot stick.
+  const campusBadgeKey = campus ? `${campus.id}:${campus.logoUrl}` : 'none'
+
+  const { settings, askOpen, saveTermWeeks, openWeekSetup, closeWeekSetup } = useTermWeek(
+    user.id,
+  )
   const {
     courses,
     askOpen: askCoursesOpen,
     saveCourses,
     openCoursesSetup,
     closeCoursesSetup,
-  } = useCourses()
+  } = useCourses(user.id)
   const {
     tasks,
     addTask,
@@ -60,7 +98,11 @@ function App() {
     toggleComplete,
     addAttachment,
     removeAttachment,
-  } = useTasks()
+    addAssignmentFile,
+    removeAssignmentFile,
+    addLink,
+    removeLink,
+  } = useTasks(user.id)
 
   const weekDays = useMemo(() => getWeekDays(anchor), [anchor])
   const rangeLabel = formatRangeLabel(anchor, view)
@@ -132,14 +174,34 @@ function App() {
         navLabel={navLabel}
         termWeekLabel={termWeekLabel}
         showTermWeek={view === 'week'}
+        username={user.username}
         theme={theme}
-        onThemeChange={setTheme}
+        campusOption={campusOption}
+        campusBadge={
+          campus
+            ? {
+                key: campusBadgeKey,
+                name: campus.name,
+                shortName: campus.shortName,
+                logoUrl: campus.logoUrl,
+                primary: campus.preview[0],
+                accent: campus.preview[1],
+              }
+            : null
+        }
+        onThemeChange={onThemeChange}
+        onSelectCampus={() => {
+          if (campus) {
+            onSelectCampusTheme(campus)
+          }
+        }}
         onViewChange={setView}
         onPrev={() => setAnchor((prev) => shiftAnchor(prev, view, -1))}
         onNext={() => setAnchor((prev) => shiftAnchor(prev, view, 1))}
         onToday={() => setAnchor(new Date())}
         onSetTermWeek={openWeekSetup}
         onAdd={() => openCreate(toDateKey(anchor), null)}
+        onLogout={onLogout}
       />
 
       <main className="week-board">
@@ -221,9 +283,67 @@ function App() {
           }}
           onAddAttachment={addAttachment}
           onRemoveAttachment={removeAttachment}
+          onAddAssignmentFile={addAssignmentFile}
+          onRemoveAssignmentFile={removeAssignmentFile}
+          onAddLink={addLink}
+          onRemoveLink={removeLink}
         />
       )}
     </div>
+  )
+}
+
+function App() {
+  const {
+    user,
+    busy,
+    hasAccounts,
+    register,
+    login,
+    requestPasswordReset,
+    resetPassword,
+    logout,
+  } = useAuth()
+  const { theme, setTheme, setCampusTheme, rememberCampus, clearCampus } = useTheme()
+
+  if (!user) {
+    return (
+      <AuthScreen
+        modeHint={hasAccounts ? 'login' : 'register'}
+        busy={busy}
+        theme={theme}
+        onThemeChange={setTheme}
+        onCampusResolved={rememberCampus}
+        onCampusCleared={clearCampus}
+        onSelectCampusTheme={setCampusTheme}
+        onLogin={async (loginId, password) => {
+          await login(loginId, password)
+        }}
+        onRegister={async (username, email, password) => {
+          await register(username, email, password)
+        }}
+        onRequestReset={async (email) => requestPasswordReset(email)}
+        onResetPassword={async (email, code, newPassword) => {
+          await resetPassword(email, code, newPassword)
+        }}
+      />
+    )
+  }
+
+  return (
+    <PlannerApp
+      key={user.id}
+      user={user}
+      theme={theme}
+      onThemeChange={setTheme}
+      onSelectCampusTheme={setCampusTheme}
+      onCampusResolved={rememberCampus}
+      onCampusCleared={clearCampus}
+      onLogout={() => {
+        clearCampus()
+        logout()
+      }}
+    />
   )
 }
 

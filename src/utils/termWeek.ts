@@ -7,6 +7,7 @@ import {
 } from 'date-fns'
 import type { CalendarView } from '../types/view'
 import { parseDateKey, toDateKey } from './dates'
+import { userScopedKey } from './userStorage'
 
 /** Terms start at week 0. */
 export const MIN_TERM_WEEK = 0
@@ -42,9 +43,9 @@ export function isSameCalendarWeek(a: Date, b: Date): boolean {
   return getMondayKey(a) === getMondayKey(b)
 }
 
-export function readTermWeekSettings(): TermWeekSettings | null {
+export function readTermWeekSettings(userId: string): TermWeekSettings | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(userScopedKey(STORAGE_KEY, userId))
     if (!raw) {
       return null
     }
@@ -81,8 +82,8 @@ export function readTermWeekSettings(): TermWeekSettings | null {
   }
 }
 
-export function writeTermWeekSettings(settings: TermWeekSettings): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
+export function writeTermWeekSettings(userId: string, settings: TermWeekSettings): void {
+  localStorage.setItem(userScopedKey(STORAGE_KEY, userId), JSON.stringify(settings))
 }
 
 export function getTermWeekInfo(

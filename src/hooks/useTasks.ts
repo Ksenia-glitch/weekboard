@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import type { AssessmentType, Attachment, Task } from '../types'
+import type { AssessmentType, Attachment, Task, TaskLink } from '../types'
 import { isAssessmentType } from '../utils/assessment'
+import { isValidHttpUrl, linkLabelFromUrl, normalizeUrl } from '../utils/links'
+import { userScopedKey } from '../utils/userStorage'
 
 const STORAGE_KEY = 'cadence-week-tasks-v1'
 
@@ -34,15 +36,17 @@ function normalizeTask(raw: unknown): Task | null {
     plannedDate: typeof item.plannedDate === 'string' ? item.plannedDate : now.slice(0, 10),
     deadline: typeof item.deadline === 'string' ? item.deadline : now.slice(0, 10),
     completed: Boolean(item.completed),
+    assignmentFiles: Array.isArray(item.assignmentFiles) ? item.assignmentFiles : [],
+    links: Array.isArray(item.links) ? item.links : [],
     attachments: Array.isArray(item.attachments) ? item.attachments : [],
     createdAt: typeof item.createdAt === 'string' ? item.createdAt : now,
     updatedAt: typeof item.updatedAt === 'string' ? item.updatedAt : now,
   }
 }
 
-function readTasks(): Task[] {
+function readTasks(userId: string): Task[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
+    const raw = localStorage.getItem(userScopedKey(STORAGE_KEY, userId))
     if (!raw) {
       return []
     }
@@ -58,8 +62,8 @@ function readTasks(): Task[] {
   }
 }
 
-function writeTasks(tasks: Task[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
+function writeTasks(userId: string, tasks: Task[]): void {
+  localStorage.setItem(userScopedKey(STORAGE_KEY, userId), JSON.stringify(tasks))
 }
 
 export type TaskDraft = {
@@ -72,12 +76,40 @@ export type TaskDraft = {
   deadline: string
 }
 
-export function useTasks() {
-  const [tasks, setTasks] = useState<Task[]>(() => readTasks())
+async function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result)
+        return
+      }
+      reject(new Error('Could not read file'))
+    }
+    reader.onerror = () => {
+      reject(reader.error ?? new Error('Could not read file'))
+    }
+    reader.readAsDataURL(file)
+  })
+}
+
+async function fileToAttachment(file: File): Promise<Attachment> {
+  const dataUrl = await readFileAsDataUrl(file)
+  return {
+    id: createId(),
+    name: file.name,
+    mimeType: file.type || 'application/octet-stream',
+    dataUrl,
+    createdAt: new Date().toISOString(),
+  }
+}
+
+export function useTasks(userId: string) {
+  const [tasks, setTasks] = useState<Task[]>(() => readTasks(userId))
 
   useEffect(() => {
-    writeTasks(tasks)
-  }, [tasks])
+    writeTasks(userId, tasks)
+  }, [tasks, userId])
 
   function addTask(draft: TaskDraft): Task {
     const now = new Date().toISOString()
@@ -91,6 +123,8 @@ export function useTasks() {
       plannedDate: draft.plannedDate,
       deadline: draft.deadline,
       completed: false,
+      assignmentFiles: [],
+      links: [],
       attachments: [],
       createdAt: now,
       updatedAt: now,
@@ -136,14 +170,7 @@ export function useTasks() {
   }
 
   async function addAttachment(taskId: string, file: File): Promise<void> {
-    const dataUrl = await readFileAsDataUrl(file)
-    const attachment: Attachment = {
-      id: createId(),
-      name: file.name,
-      mimeType: file.type || 'application/octet-stream',
-      dataUrl,
-      createdAt: new Date().toISOString(),
-    }
+    const attachment = await fileToAttachment(file)
     setTasks((prev) =>
       prev.map((task) =>
         task.id === taskId
@@ -171,6 +198,73 @@ export function useTasks() {
     )
   }
 
+  async function addAssignmentFile(taskId: string, file: File): Promise<void> {
+    const attachment = await fileToAttachment(file)
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              assignmentFiles: [...task.assignmentFiles, attachment],
+              updatedAt: new Date().toISOString(),
+            }
+          : task,
+      ),
+    )
+  }
+
+  function removeAssignmentFile(taskId: string, fileId: string): void {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              assignmentFiles: task.assignmentFiles.filter((item) => item.id !== fileId),
+              updatedAt: new Date().toISOString(),
+            }
+          : task,
+      ),
+    )
+  }
+
+  function addLink(taskId: string, rawUrl: string, label?: string): void {
+    if (!isValidHttpUrl(rawUrl)) {
+      throw new Error('Enter a valid website link.')
+    }
+    const url = normalizeUrl(rawUrl)
+    const link: TaskLink = {
+      id: createId(),
+      url,
+      label: label?.trim() || linkLabelFromUrl(url),
+      createdAt: new Date().toISOString(),
+    }
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              links: [...task.links, link],
+              updatedAt: new Date().toISOString(),
+            }
+          : task,
+      ),
+    )
+  }
+
+  function removeLink(taskId: string, linkId: string): void {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId
+          ? {
+              ...task,
+              links: task.links.filter((item) => item.id !== linkId),
+              updatedAt: new Date().toISOString(),
+            }
+          : task,
+      ),
+    )
+  }
+
   return {
     tasks,
     addTask,
@@ -179,22 +273,9 @@ export function useTasks() {
     toggleComplete,
     addAttachment,
     removeAttachment,
+    addAssignmentFile,
+    removeAssignmentFile,
+    addLink,
+    removeLink,
   }
-}
-
-function readFileAsDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        resolve(reader.result)
-        return
-      }
-      reject(new Error('Could not read file'))
-    }
-    reader.onerror = () => {
-      reject(reader.error ?? new Error('Could not read file'))
-    }
-    reader.readAsDataURL(file)
-  })
 }

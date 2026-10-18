@@ -4,7 +4,23 @@
     <script>
       try {
         var theme = localStorage.getItem('cadence-week-theme-v1')
-        var allowed = ['moss', 'ocean', 'ink', 'sunset', 'blossom', 'dusk']
+        var allowed = [
+          'moss',
+          'ocean',
+          'ink',
+          'sunset',
+          'blossom',
+          'dusk',
+          'osu',
+          'uo',
+          'pdx',
+          'uw',
+          'ucla',
+          'berkeley',
+          'stanford',
+          'asu',
+          'campus',
+        ]
         if (theme && allowed.indexOf(theme) !== -1) {
           document.documentElement.setAttribute('data-theme', theme)
         }

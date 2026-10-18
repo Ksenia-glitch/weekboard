@@ -207,6 +207,326 @@
   --urgency-done: #8aa099;
 }
 
+/*
+ * Campus themes — official brand hex from university brand guides,
+ * cross-checked against the athletics / mascot logos in public/campuses/.
+ */
+[data-theme='osu'] {
+  /* Beaver Orange #D73F09 + Paddletail Black — beaver head logo */
+  --ink: #1a0f0a;
+  --ink-soft: #4a2c20;
+  --muted: #7a5a4a;
+  --paper: rgba(255, 247, 242, 0.9);
+  --paper-strong: rgba(255, 252, 249, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.84);
+  --line: rgba(215, 63, 9, 0.22);
+  --brand: #d73f09;
+  --brand-deep: #a32f07;
+  --accent: #000000;
+  --on-brand: #ffffff;
+  --shadow: 0 18px 50px rgba(163, 47, 7, 0.18);
+  --body-bg: #f0ddd2;
+  --glow-a: rgba(215, 63, 9, 0.38);
+  --glow-b: rgba(0, 0, 0, 0.14);
+  --sky-1: #fff1e8;
+  --sky-2: #f5dfd2;
+  --sky-3: #e8c9b6;
+  --grid-line: rgba(215, 63, 9, 0.055);
+  --modal-bg-1: #fffaf7;
+  --modal-bg-2: #f6e6db;
+  --modal-scrim: rgba(26, 15, 10, 0.48);
+  --surface-tint: rgba(215, 63, 9, 0.12);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --card-shadow: 0 8px 18px rgba(163, 47, 7, 0.08);
+  --urgency-calm: #4a773c;
+  --urgency-watch: #ffb500;
+  --urgency-soon: #d73f09;
+  --urgency-urgent: #a32f07;
+  --urgency-overdue: #5c1604;
+  --urgency-done: #7a5a4a;
+}
+
+[data-theme='uo'] {
+  /* UO Green #007030 + UO Yellow #FEE11A — duck hat + scarf */
+  --ink: #062214;
+  --ink-soft: #1f4d35;
+  --muted: #5a7a66;
+  --paper: rgba(244, 251, 246, 0.9);
+  --paper-strong: rgba(255, 255, 255, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.84);
+  --line: rgba(0, 112, 48, 0.2);
+  --brand: #007030;
+  --brand-deep: #004d21;
+  --accent: #fee11a;
+  --on-brand: #f4fbf6;
+  --shadow: 0 18px 50px rgba(0, 77, 33, 0.16);
+  --body-bg: #d2e6d9;
+  --glow-a: rgba(254, 225, 26, 0.42);
+  --glow-b: rgba(0, 112, 48, 0.26);
+  --sky-1: #e6f5eb;
+  --sky-2: #d2eadb;
+  --sky-3: #b8dcc6;
+  --grid-line: rgba(0, 112, 48, 0.05);
+  --modal-bg-1: #f5fcf7;
+  --modal-bg-2: #dff0e6;
+  --modal-scrim: rgba(6, 34, 20, 0.48);
+  --surface-tint: rgba(0, 112, 48, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --card-shadow: 0 8px 18px rgba(0, 77, 33, 0.07);
+  --urgency-calm: #007030;
+  --urgency-watch: #fee11a;
+  --urgency-soon: #d06a2b;
+  --urgency-urgent: #c23b3b;
+  --urgency-overdue: #7a1f2b;
+  --urgency-done: #5a7a66;
+}
+
+[data-theme='pdx'] {
+  /* Forest green from PS shield logo */
+  --ink: #0f2418;
+  --ink-soft: #2c4a36;
+  --muted: #5f7866;
+  --paper: rgba(243, 247, 244, 0.9);
+  --paper-strong: rgba(255, 255, 255, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.84);
+  --line: rgba(21, 71, 52, 0.2);
+  --brand: #154734;
+  --brand-deep: #0d2f22;
+  --accent: #6b8e23;
+  --on-brand: #f3f7f4;
+  --shadow: 0 18px 50px rgba(13, 47, 34, 0.15);
+  --body-bg: #d5e3d9;
+  --glow-a: rgba(107, 142, 35, 0.3);
+  --glow-b: rgba(21, 71, 52, 0.24);
+  --sky-1: #e7f0e9;
+  --sky-2: #d7e5db;
+  --sky-3: #c2d5c8;
+  --grid-line: rgba(21, 71, 52, 0.045);
+  --modal-bg-1: #f6fbf7;
+  --modal-bg-2: #e4efe7;
+  --modal-scrim: rgba(12, 28, 18, 0.48);
+  --surface-tint: rgba(21, 71, 52, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --card-shadow: 0 8px 18px rgba(13, 47, 34, 0.07);
+  --urgency-calm: #154734;
+  --urgency-watch: #b8892a;
+  --urgency-soon: #d06a2b;
+  --urgency-urgent: #c23b3b;
+  --urgency-overdue: #7a1f2b;
+  --urgency-done: #5f7866;
+}
+
+[data-theme='uw'] {
+  /* UW Purple #4B2E83 + Metallic Gold #B7A57A — W logo */
+  --ink: #1a1230;
+  --ink-soft: #433060;
+  --muted: #72658a;
+  --paper: rgba(247, 244, 252, 0.9);
+  --paper-strong: rgba(255, 255, 255, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.84);
+  --line: rgba(75, 46, 131, 0.2);
+  --brand: #4b2e83;
+  --brand-deep: #321f5c;
+  --accent: #b7a57a;
+  --on-brand: #f7f4fc;
+  --shadow: 0 18px 50px rgba(50, 31, 92, 0.18);
+  --body-bg: #ddd2ec;
+  --glow-a: rgba(183, 165, 122, 0.36);
+  --glow-b: rgba(75, 46, 131, 0.28);
+  --sky-1: #efe8f8;
+  --sky-2: #e0d6f0;
+  --sky-3: #cdc0e3;
+  --grid-line: rgba(75, 46, 131, 0.05);
+  --modal-bg-1: #faf8fd;
+  --modal-bg-2: #ebe3f6;
+  --modal-scrim: rgba(26, 18, 48, 0.5);
+  --surface-tint: rgba(75, 46, 131, 0.11);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --card-shadow: 0 8px 18px rgba(50, 31, 92, 0.08);
+  --urgency-calm: #4b2e83;
+  --urgency-watch: #b7a57a;
+  --urgency-soon: #d06a2b;
+  --urgency-urgent: #c23b3b;
+  --urgency-overdue: #7a1f2b;
+  --urgency-done: #72658a;
+}
+
+[data-theme='ucla'] {
+  /* UCLA Blue #2774AE + Gold #FFD100 — script wordmark */
+  --ink: #102636;
+  --ink-soft: #35556f;
+  --muted: #6a8498;
+  --paper: rgba(243, 249, 253, 0.9);
+  --paper-strong: rgba(255, 255, 255, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.84);
+  --line: rgba(39, 116, 174, 0.2);
+  --brand: #2774ae;
+  --brand-deep: #1a527c;
+  --accent: #ffd100;
+  --on-brand: #f3f9fd;
+  --shadow: 0 18px 50px rgba(26, 82, 124, 0.16);
+  --body-bg: #d2e4f2;
+  --glow-a: rgba(255, 209, 0, 0.38);
+  --glow-b: rgba(39, 116, 174, 0.28);
+  --sky-1: #e6f2fb;
+  --sky-2: #d4e7f5;
+  --sky-3: #bdd8ec;
+  --grid-line: rgba(39, 116, 174, 0.05);
+  --modal-bg-1: #f6fbfe;
+  --modal-bg-2: #e4f0f9;
+  --modal-scrim: rgba(14, 36, 54, 0.48);
+  --surface-tint: rgba(39, 116, 174, 0.11);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --card-shadow: 0 8px 18px rgba(26, 82, 124, 0.07);
+  --urgency-calm: #2774ae;
+  --urgency-watch: #ffd100;
+  --urgency-soon: #d06a2b;
+  --urgency-urgent: #c23b3b;
+  --urgency-overdue: #7a1f2b;
+  --urgency-done: #6a8498;
+}
+
+[data-theme='berkeley'] {
+  /* Berkeley Blue #003262 + California Gold #FDB515 — Cal script */
+  --ink: #0a1828;
+  --ink-soft: #2c4460;
+  --muted: #667890;
+  --paper: rgba(244, 248, 252, 0.9);
+  --paper-strong: rgba(255, 255, 255, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.84);
+  --line: rgba(0, 50, 98, 0.2);
+  --brand: #003262;
+  --brand-deep: #001f3d;
+  --accent: #fdb515;
+  --on-brand: #f4f8fc;
+  --shadow: 0 18px 50px rgba(0, 31, 61, 0.18);
+  --body-bg: #d2dcea;
+  --glow-a: rgba(253, 181, 21, 0.4);
+  --glow-b: rgba(0, 50, 98, 0.26);
+  --sky-1: #e6eef7;
+  --sky-2: #d5e0ed;
+  --sky-3: #c0cede;
+  --grid-line: rgba(0, 50, 98, 0.05);
+  --modal-bg-1: #f6fafd;
+  --modal-bg-2: #e4edf6;
+  --modal-scrim: rgba(8, 20, 36, 0.5);
+  --surface-tint: rgba(0, 50, 98, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --card-shadow: 0 8px 18px rgba(0, 31, 61, 0.08);
+  --urgency-calm: #003262;
+  --urgency-watch: #fdb515;
+  --urgency-soon: #d06a2b;
+  --urgency-urgent: #c23b3b;
+  --urgency-overdue: #7a1f2b;
+  --urgency-done: #667890;
+}
+
+[data-theme='stanford'] {
+  /* Cardinal Red #8C1515 — S + tree logo */
+  --ink: #1f1010;
+  --ink-soft: #5a3030;
+  --muted: #8a6666;
+  --paper: rgba(253, 247, 247, 0.9);
+  --paper-strong: rgba(255, 255, 255, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.84);
+  --line: rgba(140, 21, 21, 0.2);
+  --brand: #8c1515;
+  --brand-deep: #5e0e0e;
+  --accent: #2e2d29;
+  --on-brand: #fdf6f6;
+  --shadow: 0 18px 50px rgba(94, 14, 14, 0.18);
+  --body-bg: #e8d4d4;
+  --glow-a: rgba(140, 21, 21, 0.3);
+  --glow-b: rgba(46, 45, 41, 0.16);
+  --sky-1: #f7eaea;
+  --sky-2: #ead8d8;
+  --sky-3: #d9c0c0;
+  --grid-line: rgba(140, 21, 21, 0.05);
+  --modal-bg-1: #fdf8f8;
+  --modal-bg-2: #f1e3e3;
+  --modal-scrim: rgba(36, 12, 12, 0.5);
+  --surface-tint: rgba(140, 21, 21, 0.11);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --card-shadow: 0 8px 18px rgba(94, 14, 14, 0.08);
+  --urgency-calm: #2f7d6d;
+  --urgency-watch: #b8892a;
+  --urgency-soon: #d06a2b;
+  --urgency-urgent: #8c1515;
+  --urgency-overdue: #5e0e0e;
+  --urgency-done: #8a6666;
+}
+
+[data-theme='asu'] {
+  /* ASU Maroon #8C1D40 + Gold #FFC627 — pitchfork logo */
+  --ink: #241018;
+  --ink-soft: #5c3044;
+  --muted: #8a6676;
+  --paper: rgba(255, 248, 242, 0.9);
+  --paper-strong: rgba(255, 255, 255, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.84);
+  --line: rgba(140, 29, 64, 0.2);
+  --brand: #8c1d40;
+  --brand-deep: #5e1330;
+  --accent: #ffc627;
+  --on-brand: #fff7fa;
+  --shadow: 0 18px 50px rgba(94, 19, 48, 0.18);
+  --body-bg: #e8d4d8;
+  --glow-a: rgba(255, 198, 39, 0.4);
+  --glow-b: rgba(140, 29, 64, 0.26);
+  --sky-1: #f8e9ee;
+  --sky-2: #edd6de;
+  --sky-3: #dcc0cb;
+  --grid-line: rgba(140, 29, 64, 0.05);
+  --modal-bg-1: #fdf8fa;
+  --modal-bg-2: #f3e4ea;
+  --modal-scrim: rgba(36, 12, 22, 0.5);
+  --surface-tint: rgba(140, 29, 64, 0.11);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --card-shadow: 0 8px 18px rgba(94, 19, 48, 0.08);
+  --urgency-calm: #2f7d6d;
+  --urgency-watch: #ffc627;
+  --urgency-soon: #d06a2b;
+  --urgency-urgent: #8c1d40;
+  --urgency-overdue: #5e1330;
+  --urgency-done: #8a6676;
+}
+
+/* Dynamic school theme — CSS vars set from looked-up logo colors */
+[data-theme='campus'] {
+  --ink: var(--campus-ink, #1a1a1a);
+  --ink-soft: var(--campus-ink-soft, #3d3d3d);
+  --muted: var(--campus-muted, #6a6a6a);
+  --paper: color-mix(in srgb, var(--campus-surface, #f7f7f7) 86%, white);
+  --paper-strong: rgba(255, 255, 255, 0.96);
+  --paper-soft: rgba(255, 255, 255, 0.84);
+  --line: color-mix(in srgb, var(--campus-brand, #1f4d45) 22%, transparent);
+  --brand: var(--campus-brand, #1f4d45);
+  --brand-deep: var(--campus-brand-deep, #12362f);
+  --accent: var(--campus-accent, #c9783a);
+  --on-brand: var(--campus-on-brand, #ffffff);
+  --on-accent: var(--campus-on-accent, #141414);
+  --shadow: 0 18px 50px color-mix(in srgb, var(--campus-brand, #1f4d45) 18%, transparent);
+  --body-bg: var(--campus-body, #dce8e2);
+  --glow-a: color-mix(in srgb, var(--campus-accent, #c9783a) 35%, transparent);
+  --glow-b: color-mix(in srgb, var(--campus-brand, #1f4d45) 28%, transparent);
+  --sky-1: var(--campus-sky-1, #e8f1ec);
+  --sky-2: var(--campus-sky-2, #d5e4dd);
+  --sky-3: var(--campus-sky-3, #c5d7cf);
+  --grid-line: color-mix(in srgb, var(--campus-brand, #1f4d45) 5%, transparent);
+  --modal-bg-1: #fbfefc;
+  --modal-bg-2: var(--campus-sky-2, #eef5f1);
+  --modal-scrim: rgba(20, 20, 20, 0.48);
+  --surface-tint: color-mix(in srgb, var(--campus-brand, #1f4d45) 10%, transparent);
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --card-shadow: 0 8px 18px color-mix(in srgb, var(--campus-brand, #1f4d45) 8%, transparent);
+  --urgency-calm: var(--campus-brand, #2f7d6d);
+  --urgency-watch: var(--campus-accent, #b8892a);
+  --urgency-soon: #d06a2b;
+  --urgency-urgent: #c23b3b;
+  --urgency-overdue: #7a1f2b;
+  --urgency-done: #6a6a6a;
+}
+
 :root {
   font-family: var(--font-body);
   line-height: 1.45;

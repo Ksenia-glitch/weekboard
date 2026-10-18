@@ -11,9 +11,11 @@ export type TermWeekDraft = {
   finalWeekNumber: number
 }
 
-export function useTermWeek() {
-  const [settings, setSettings] = useState<TermWeekSettings | null>(() => readTermWeekSettings())
-  const [askOpen, setAskOpen] = useState(() => readTermWeekSettings() === null)
+export function useTermWeek(userId: string) {
+  const [settings, setSettings] = useState<TermWeekSettings | null>(() =>
+    readTermWeekSettings(userId),
+  )
+  const [askOpen, setAskOpen] = useState(() => readTermWeekSettings(userId) === null)
 
   function saveTermWeeks(draft: TermWeekDraft, forDate: Date = new Date()) {
     const next: TermWeekSettings = {
@@ -21,7 +23,7 @@ export function useTermWeek() {
       weekNumber: draft.weekNumber,
       finalWeekNumber: draft.finalWeekNumber,
     }
-    writeTermWeekSettings(next)
+    writeTermWeekSettings(userId, next)
     setSettings(next)
     setAskOpen(false)
   }

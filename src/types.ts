@@ -6,6 +6,13 @@ export type Attachment = {
   createdAt: string
 }
 
+export type TaskLink = {
+  id: string
+  label: string
+  url: string
+  createdAt: string
+}
+
 /**
  * homework = work to submit
  * quiz/test/exam = something you need to prepare for
@@ -26,6 +33,11 @@ export type Task = {
   /** Real due date or test date (YYYY-MM-DD). */
   deadline: string
   completed: boolean
+  /** Files that are the assignment itself (prompt, PDF, screenshot of Canvas). */
+  assignmentFiles: Attachment[]
+  /** Links to the assignment page (Canvas, Google Doc, etc.). */
+  links: TaskLink[]
+  /** Progress / study files you already finished. */
   attachments: Attachment[]
   createdAt: string
   updatedAt: string

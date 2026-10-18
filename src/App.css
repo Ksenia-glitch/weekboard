@@ -74,6 +74,212 @@
   margin-top: 0.35rem;
 }
 
+.week-header__account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.account-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 10rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--paper-strong);
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.auth-screen {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem clamp(1rem, 3vw, 2.5rem) 2.5rem;
+}
+
+.auth-screen__top {
+  position: absolute;
+  top: 1.25rem;
+  right: clamp(1rem, 3vw, 2.5rem);
+  z-index: 2;
+}
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+  width: min(420px, 100%);
+  padding: 1.6rem 1.5rem 1.35rem;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--brand) 22%, transparent);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.22);
+  animation: rise 0.45s ease-out both;
+  color: var(--ink);
+}
+
+.auth-card--email {
+  width: min(400px, 100%);
+  border-color: color-mix(in srgb, var(--brand) 40%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--brand) 18%, transparent),
+    0 28px 80px rgba(0, 0, 0, 0.24);
+}
+
+.auth-step {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.auth-step strong {
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.field--email input {
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+
+.field-required {
+  margin-left: 0.35rem;
+  color: color-mix(in srgb, var(--urgency-urgent) 85%, var(--ink));
+  font-style: normal;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: lowercase;
+}
+
+.auth-card__title {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.55rem, 4vw, 1.9rem);
+  line-height: 1.15;
+}
+
+.auth-card__sub,
+.auth-card__note {
+  margin: 0.55rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.auth-card__note {
+  font-size: 0.8rem;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+  margin-top: 1.15rem;
+  padding: 0.3rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface-tint) 80%, transparent);
+  border: 1px solid var(--line);
+}
+
+.auth-tabs__btn {
+  padding: 0.55rem 0.75rem;
+  border: none;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.auth-tabs__btn.is-active {
+  background: var(--paper-strong);
+  color: var(--ink);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--brand) 18%, transparent);
+}
+
+.auth-form {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.1rem;
+}
+
+.auth-form__submit {
+  width: 100%;
+  margin-top: 0.15rem;
+}
+
+.auth-card__link {
+  display: block;
+  margin: 0.85rem auto 0;
+  text-align: center;
+}
+
+.form-info {
+  margin: 0;
+  color: color-mix(in srgb, var(--brand) 75%, black);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.theme-picker__heading--campus {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.campus-prompt__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 1rem 0 0.35rem;
+}
+
+.campus-prompt__logo {
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 10px color-mix(in srgb, var(--brand) 20%, transparent));
+}
+
+.campus-prompt__preview {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.campus-prompt__preview span {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  box-shadow: var(--card-shadow);
+}
+
+.campus-prompt__hex {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.modal__actions--stack {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: 1.15rem;
+}
+
+.modal__actions--stack .primary-btn,
+.modal__actions--stack .secondary-btn {
+  width: 100%;
+}
+
 .add-btn {
   width: 3.25rem;
   height: 3.25rem;
@@ -127,6 +333,13 @@
   color: var(--ink);
 }
 
+.brand-mark-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem 0.75rem;
+}
+
 .brand-mark {
   margin: 0;
   font-family: var(--font-display);
@@ -135,6 +348,24 @@
   letter-spacing: -0.03em;
   line-height: 0.95;
   color: var(--brand-deep);
+}
+
+.campus-badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: clamp(2.85rem, 5.5vw, 3.75rem);
+  height: clamp(2.85rem, 5.5vw, 3.75rem);
+  margin-top: 0.1em;
+  filter: drop-shadow(0 4px 12px color-mix(in srgb, var(--brand) 24%, transparent));
+}
+
+.campus-badge__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .brand-sub {
@@ -348,8 +579,8 @@
   padding: 0 0.75rem;
   border-radius: 999px;
   background: transparent;
-  color: var(--brand);
-  font-weight: 600;
+  color: var(--brand-deep);
+  font-weight: 700;
 }
 
 .nav-btn:hover,
@@ -362,6 +593,7 @@
 
 .nav-btn--text {
   min-width: auto;
+  color: var(--ink);
 }
 
 .primary-btn,
@@ -914,6 +1146,10 @@
   color: var(--ink);
 }
 
+.field textarea {
+  resize: none;
+}
+
 .field select {
   appearance: none;
   background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
@@ -1063,6 +1299,63 @@
   margin: 0.75rem 0 0;
   padding: 0;
   list-style: none;
+}
+
+.link-form {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.link-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.link-list__open {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  word-break: break-word;
+}
+
+.link-list__open:hover {
+  color: color-mix(in srgb, var(--brand) 80%, black);
+}
+
+.flag-assign {
+  background: color-mix(in srgb, var(--brand) 18%, transparent);
+}
+
+.flag-link {
+  background: color-mix(in srgb, #2f6fed 18%, transparent);
+}
+
+.task-card__link {
+  display: block;
+  margin: 0.35rem 0.7rem 0.65rem 2.6rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 10px;
+  background: color-mix(in srgb, #2f6fed 12%, transparent);
+  color: color-mix(in srgb, #2f6fed 85%, black);
+  font-size: 0.78rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.task-card__link:hover {
+  background: color-mix(in srgb, #2f6fed 22%, transparent);
 }
 
 .attachment-item {
